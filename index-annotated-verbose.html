@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!--
+  The DOCTYPE declaration. This isn't an HTML tag -- it's an instruction to the
+  browser that says "render this page using the modern HTML5 standard," rather
+  than falling back to a legacy compatibility mode from the 1990s/2000s that
+  browsers still support for old pages. Every HTML file should start with this,
+  exactly as written, with nothing before it.
+-->
+<html lang="en">
+<!--
+  Every HTML document has exactly one <html> element, and everything else in
+  the file lives inside it. The `lang="en"` attribute declares the page's
+  language. This isn't just metadata for humans -- screen readers use it to
+  choose the correct pronunciation rules, and search engines use it to serve
+  the page to the right audience. Leaving it out doesn't break the page
+  visually, but it's a real accessibility gap.
+-->
+<head>
+  <!--
+    The <head> holds information ABOUT the page -- things the browser and
+    other tools need, but that don't themselves render as visible content.
+    Compare this to <body> below, which holds what you actually SEE.
+  -->
+
+  <meta charset="UTF-8" />
+  <!--
+    This declares the character encoding: the system the browser uses to turn
+    the raw bytes of this file into the actual letters, numbers, and symbols
+    on screen. UTF-8 covers essentially every character in every language.
+
+    This looks like a throwaway line, but skipping it is a genuine security
+    problem, not just a cosmetic one. Without a declared encoding, a browser
+    has to guess -- and an attacker can sometimes exploit that guess to make
+    the browser interpret injected text as executable script instead of
+    harmless content, which is one path to a Cross-Site Scripting (XSS)
+    attack. Always include this line.
+  -->
+
+  <title>Philip Bogden</title>
+  <!--
+    The text shown in the browser tab and in bookmarks -- not the page's
+    heading (that's the <h1> below, which is separate and serves a different
+    purpose: <title> is for the browser chrome, <h1> is page content).
+  -->
+
+  <style>
+    /*
+      CSS (Cascading Style Sheets) controls appearance: layout, color,
+      spacing, fonts -- everything about how content LOOKS, as opposed to
+      HTML, which controls what the content IS (a heading, a paragraph, a
+      button). Putting CSS inside a <style> tag like this, in the same file,
+      is fine for a small page like this one. Larger projects usually move
+      CSS into a separate .css file and link to it, so styling can be reused
+      across multiple pages without copy-pasting it into each one.
+    */
+    body {
+      font-family: system-ui, sans-serif; /* use the OS's default UI font instead of shipping a custom one */
+      max-width: 32rem;                   /* keeps lines of text from stretching uncomfortably wide */
+      margin: 3rem auto;                  /* auto left/right margin centers the block horizontally */
+      padding: 0 1rem;                    /* breathing room on narrow (mobile) screens */
+      background-color: #f7f5f0;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 0; /* pulls the subtitle below it closer, so they read as one unit */
+    }
+
+    .title {
+      color: #555;
+      margin-top: 0.25rem;
+    }
+
+    button {
+      font: inherit;      /* buttons don't inherit the page font by default in most browsers -- this opts back in */
+      padding: 0.5rem 1rem;
+      margin-top: 1rem;
+      cursor: pointer;    /* shows a hand cursor on hover, signaling "this is clickable" */
+    }
+
+    #fun-fact {
+      margin-top: 1rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    Everything visible on the page lives inside <body>. The browser renders
+    these elements top to bottom, in the order they appear in the file.
+  -->
+
+  <h1>Philip Bogden</h1>
+  <!--
+    <h1> is a semantic heading, not just "big bold text" -- it tells browsers,
+    screen readers, and search engines "this is the main heading of this
+    page." A page should generally have exactly one <h1>. You could make text
+    look identical to this with CSS alone on a plain <div>, but you'd lose
+    that structural meaning, which is why screen readers and search engines
+    care about real heading tags, not just visual size.
+  -->
+
+  <p class="title">Associate Teaching Professor, Khoury College of Computer Sciences</p>
+  <!--
+    class="title" doesn't do anything by itself -- it's a label. The CSS rule
+    for `.title` above is what actually makes it gray and adds spacing. One
+    element can have many classes, and many elements can share one class,
+    which is the whole point: classes let you style groups of things
+    consistently without repeating CSS for each one.
+  -->
+
+  <p>
+    I teach web development at Northeastern's Roux Institute in Portland, Maine.
+    My interests include data visualization, data science, and AI.
+  </p>
+
+  <button id="fact-button">Tell me a fun fact</button>
+  <!--
+    `id` is similar to `class`, but an id must be unique on the page -- only
+    one element should ever have `id="fact-button"`. That uniqueness is what
+    lets the JavaScript below reliably grab exactly this one element by name,
+    rather than accidentally matching several.
+  -->
+  <p id="fun-fact"></p>
+  <!-- Starts empty on purpose -- JavaScript fills this in after a click -->
+
+  <script>
+    // JavaScript adds behavior: things that happen in response to what the
+    // user does, as opposed to HTML (structure) and CSS (appearance). It's
+    // placed at the bottom of <body>, after the elements it references, so
+    // the browser has already created those elements by the time this code
+    // runs and tries to find them. Putting it in <head> instead would often
+    // fail, because the button wouldn't exist yet.
+
+    const facts = [
+      "I row and scull competitively in coastal Maine waters.",
+      "I spent two years developing open data policy at the National Science Foundation.",
+      "I earned my PhD in Oceanography from UC San Diego.",
+    ];
+    // An array: an ordered list of values. Here, a list of strings.
+
+    const button = document.getElementById("fact-button");
+    const factDisplay = document.getElementById("fun-fact");
+    // `document` represents the whole page. getElementById looks up one
+    // specific element by its id attribute (the same ids we set in the HTML
+    // above) and gives us a JavaScript reference to it, so we can act on it.
+
+    button.addEventListener("click", () => {
+      // addEventListener registers a function to run whenever a specific
+      // event happens on this element -- here, "click". The function itself
+      // (everything between `() => {` and the matching `}`) doesn't run
+      // immediately when the page loads; it only runs later, each time the
+      // button is actually clicked. This is the core pattern of interactive
+      // web pages: set up a listener once, then let it react to the user.
+
+      const fact = facts[Math.floor(Math.random() * facts.length)];
+      // Math.random() gives a decimal between 0 (inclusive) and 1 (exclusive).
+      // Multiplying by facts.length scales that into the array's index range,
+      // and Math.floor() rounds down to a whole number so it's a valid index.
+
+      factDisplay.textContent = fact;
+      // Replaces the (empty, or previously-set) text inside the <p id="fun-fact">
+      // element with the chosen fact. This is what actually changes the page
+      // on screen -- everything above it just decided what text to show.
+    });
+  </script>
+</body>
+</html>

@@ -1,9 +1,14 @@
 <!DOCTYPE html>
+<!-- Tells the browser to use modern HTML rules -->
 <html lang="en">
+<!-- lang helps screen readers and search engines -->
 <head>
   <meta charset="UTF-8" />
+  <!-- Character encoding -- always include this; missing it is a real security risk -->
   <title>Philip Bogden</title>
+  <!-- Shows in the browser tab -->
   <style>
+    /* CSS lives here for a small page like this; bigger sites use a separate .css file */
     body {
       font-family: system-ui, sans-serif;
       max-width: 32rem;
@@ -36,6 +41,7 @@
   </style>
 </head>
 <body>
+  <!-- Page content starts here -->
   <h1>Philip Bogden</h1>
   <p class="title">Associate Teaching Professor, Khoury College of Computer Sciences</p>
 
@@ -44,22 +50,26 @@
     My interests include data visualization, data science, and AI.
   </p>
 
+  <!-- Interactive element -- id lets JS find it -->
   <button id="fact-button">Tell me a fun fact</button>
   <p id="fun-fact"></p>
 
   <script>
+    // JavaScript goes at the bottom so the HTML above it loads first
     const facts = [
       "I row and scull competitively in coastal Maine waters.",
       "I spent two years developing open data policy at the National Science Foundation.",
       "I earned my PhD in Oceanography from UC San Diego.",
     ];
 
+    // Grab references to the elements we'll need
     const button = document.getElementById("fact-button");
     const factDisplay = document.getElementById("fun-fact");
 
+    // Run this function every time the button is clicked
     button.addEventListener("click", () => {
-      const fact = facts[Math.floor(Math.random() * facts.length)];
-      factDisplay.textContent = fact;
+      const fact = facts[Math.floor(Math.random() * facts.length)]; // pick a random fact
+      factDisplay.textContent = fact; // show it on the page
     });
   </script>
 </body>
